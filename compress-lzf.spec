@@ -1,24 +1,23 @@
 %{?scl:%scl_package compress-lzf}
 %{!?scl:%global pkg_name %{name}}
 
-Name:          %{?scl_prefix}compress-lzf
-Version:       1.0.3
-Release:       6%{?dist}
-Summary:       Basic LZF codec, compatible with standard C LZF package
-License:       ASL 2.0
-URL:           https://github.com/ning/compress
-Source0:       https://github.com/ning/compress/archive/%{pkg_name}-%{version}.tar.gz
+Name:		%{?scl_prefix}compress-lzf
+Version:	1.0.3
+Release:	7%{?dist}
+Summary:	Basic LZF codec, compatible with standard C LZF package
+License:	ASL 2.0
+URL:		https://github.com/ning/compress
+Source0:	https://github.com/ning/compress/archive/%{pkg_name}-%{version}.tar.gz
 
-BuildRequires: %{?scl_mvn_prefix}maven-local
-BuildRequires: mvn(junit:junit)
-BuildRequires: %{?scl_mvn_prefix}mvn(org.apache.felix:maven-bundle-plugin)
-BuildRequires: %{?scl_mvn_prefix}mvn(org.apache.maven.plugins:maven-enforcer-plugin)
-BuildRequires: %{?scl_mvn_prefix}mvn(org.apache.maven.surefire:surefire-testng)
-BuildRequires: %{?scl_mvn_prefix}mvn(org.sonatype.oss:oss-parent:pom:)
-BuildRequires: mvn(org.testng:testng)
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_maven}mvn(org.apache.felix:maven-bundle-plugin)
+BuildRequires:	%{?scl_prefix_maven}mvn(org.apache.maven.plugins:maven-enforcer-plugin)
+BuildRequires:	%{?scl_prefix_maven}mvn(org.apache.maven.surefire:surefire-testng)
+BuildRequires:	%{?scl_prefix_maven}mvn(org.sonatype.oss:oss-parent:pom:)
+BuildRequires:	%{?scl_prefix_java_common}junit
 %{?scl:Requires: %scl_runtime}
 
-BuildArch:     noarch
+BuildArch:	noarch
 
 %description
 Compression codec for LZF encoding for particularly encoding/decoding,
@@ -28,35 +27,35 @@ without Huffman (deflate/gzip) or statistical post-encoding. See
 original LZF package.
 
 %package javadoc
-Summary:       Javadoc for %{name}
+Summary:	Javadoc for %{name}
 
 %description javadoc
 This package contains javadoc for %{name}.
 
 %prep
-%{?scl_enable}
 %setup -q -n compress-%{pkg_name}-%{version}
 
 find . -name "*.class" -print -delete
 find . -name "*.jar" -type f -print -delete
 
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %pom_remove_plugin :maven-source-plugin
 %pom_xpath_remove "pom:project/pom:build/pom:plugins/pom:plugin[pom:artifactId='maven-javadoc-plugin']/pom:executions"
 
 %pom_add_dep junit:junit::test
 
 %mvn_file : %{pkg_name}
-%{?scl_disable}
+%{?scl:EOF}
 
 %build
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_build -- -Poffline-testing
-%{?scl_disable}
+%{?scl:EOF}
 
 %install
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
-%{?scl_disable}
+%{?scl:EOF}
 
 %files -f .mfiles
 %doc README.md VERSION.txt
@@ -66,6 +65,9 @@ find . -name "*.jar" -type f -print -delete
 %license LICENSE
 
 %changelog
+* Wed Oct 12 2016 Tomas Repik <trepik@redhat.com> - 1.0.3-7
+- use standard SCL macros
+
 * Wed Jul 27 2016 Tomas Repik <trepik@redhat.com> - 1.0.3-6
 - scl conversion
 
