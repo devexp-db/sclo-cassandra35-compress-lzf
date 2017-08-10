@@ -15,6 +15,7 @@ BuildRequires:	%{?scl_prefix_maven}mvn(org.apache.maven.plugins:maven-enforcer-p
 BuildRequires:	%{?scl_prefix_maven}mvn(org.apache.maven.surefire:surefire-testng)
 BuildRequires:	%{?scl_prefix_maven}mvn(org.sonatype.oss:oss-parent:pom:)
 BuildRequires:	%{?scl_prefix_java_common}junit
+BuildRequires:  %{?scl_prefix}snakeyaml
 %{?scl:Requires: %scl_runtime}
 
 BuildArch:	noarch
